@@ -1,0 +1,43 @@
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+	<!-- // <script src="jquery.js"></script> -->
+	<script src="spanningTree.js"></script>
+	<style>
+		.ToMyRight {
+ 			position:absolute;
+   			left :85%;
+   			top  :10%;
+		}
+		.fillScreen {
+			position : relative;
+			top : 0;
+			left : 0;
+			height : 100%;
+			width : 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="heading"> </div>
+	<div id="target" >
+		<canvas id="myCanvas" width="1200" height="510" style="border:1px solid #000000; left: 500px; top: 500px">
+		</canvas>
+	</div>
+	<div id="log" style="display:none"> </div>
+
+	<div id="ankur" style="display:none"> </div>
+	<div id="submitGraph">
+		<button type="button" id="finishDrawing">
+			Submit your graph
+		</button>
+	</div>
+
+	<div id="run_algorithms" style="display:none">
+		<button type="button" id="unmarkEdges">Unmark edges</button> <br>
+		<button type="button" id="runAlgorithm" >Verify results</button>
+		<pre id="show_results" style="display:none"> </pre> <br>
+	</div>
+</body>
+</html>

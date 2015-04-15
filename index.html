@@ -9,48 +9,24 @@
    			left :85%;
    			top  :10%;
 		}
+		.fillScreen {
+			position : relative;
+			top : 0;
+			left : 0;
+			height : 100%;
+			width : 100%;
+		}
 	</style>
 </head>
 
 <body>
-	<div id="target">
-		<canvas id="myCanvas" width="1000" height="340" style="border:1px solid #000000;">
-		</canvas>
-	</div>
-	<br/>
-	<button type="button" id="clear">
-		CLEAR
-	</button>
-	</br>
-	<div id="log" style="display:none"> </div>
-	</br>
-
-	<div id="divmeta" style="display:none">
-		Enter the value <input id="inputnumber" type="text"/> <br>
-		Enter the label <input id="inputlabel" type="text"/> <br>
-		<button type="button" id="submitMeta"> 
-		Submit value</button>
-	</div>
-
-	<div id="ankur" style="display:none"> </div>
-	</br>
-	<div id="submitGraph">
-		<button type="button" id="finishDrawing">
-			Submit your graph
-		</button>
-	</div>
-
-	<div id="run_algorithms" style="display:none" class="ToMyRight">
-		Select algorithm <br>
-		<select id="name"> 
-			<option value="run_bfs">BFS</option>
-			<option value="run_topsort">Topological Sort</option>
-			<option value="run_bellman_ford">Bellman Ford</option>
-		</select> <br>
-		Select source<br>
-		<input id="source" type="text"/> </br>
-		<button type="button" id="runAlgorithm" >Run</button>
-		<pre id="show_results" style="display:none"> </pre> <br>
-	</div>
+	<h1> Welcome to Graph Recognition System </h1>
+	<h3>
+		You can try the following tutorials.
+		<ul>
+			<li><a href="spanningTree/index.html">Minimum spanning tree</a><li>
+			<li><a href="bellmanFord/index.html">Single source shortest path</a></li>
+		</ul>
+	</h3>
 </body>
 </html>

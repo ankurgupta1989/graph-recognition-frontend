@@ -2,19 +2,25 @@ var points;
 var x_last;
 var y_last;
 var c;
+var bounding_box_rectangle;
 var ctx;
 var first;
 var canvas_width;
 var canvas_length;
 var cnt;  
-var server_ip = '192.168.0.3'
+var is_recognition_done;
+
+
+var server_ip = '10.202.159.118'
 
 
 
 function trackPoints() {
-    newEvent = event;
+    newEvent = event.targetTouches[0];
     var x = newEvent.pageX;
+    x = x - c.offsetLeft;
     var y = newEvent.pageY;
+    y = y - c.offsetTop;
     
     if(first==0){
         x_last = x;
@@ -80,12 +86,19 @@ function redraw() {
                     ctx.beginPath();
                     ctx.moveTo(cur.startPoint.X, cur.startPoint.Y);
                     ctx.lineTo(cur.endPoint.X, cur.endPoint.Y);
-                    if (cur.effect == "bold") {
+                    if (cur.effect == "bold" || cur.effect == "green" || cur.effect == "red") {
                         ctx.lineWidth = 5;
+                    }
+                    if (cur.effect == "green") {
+                        ctx.strokeStyle = "green";
+                    }
+                    if (cur.effect == "red") {
+                        ctx.strokeStyle = "red";
                     }
                     ctx.stroke();
                     ctx.closePath();
                     ctx.lineWidth = 1;
+                    ctx.strokeStyle = "black";
                 }
                 else if (identifier == "arrow") {
                     ctx.beginPath();
@@ -211,19 +224,42 @@ $(document).ready(function() {
     		}
     	});
         redraw();
+        // Code specific to this example.
+        $("#heading").html("<h2>Mark the edges for minimum spanning tree!</h2>");
+        is_recognition_done = true;
+        // Code specific to this example ends here.
         $("#run_algorithms").show();
         $("#submitGraph").hide();
     });
 
 
-
+    $("#unmarkEdges").click(function (e) {
+        my_url = "http://" + server_ip + ":9080/unmark_edges",
+        $.ajax({
+            url: my_url,
+            type: 'POST',
+            async: false,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            data: '',
+            dataType: 'text'
+        }).done(function(data, textStatus, xhr) {
+                $("#ankur").html("Updating the results in text box");
+                $("#show_results").show();
+                $("#show_results").html('<h3>' + data + '</h3>');
+                $("#ankur").html(data);
+        });
+        redraw();
+    });
 
 
     $("#runAlgorithm").click(function (e) {
         var name = $("#name").val();
         var source = $("#source").val();
 
-        my_url = "http://" + server_ip + ":9080/run_algorithm",
+        my_url = "http://" + server_ip + ":9080/verify_MST",
 
         $("#ankur").html("Running runAlgorithm with name " + name + " and source " + source);
 
@@ -250,9 +286,8 @@ $(document).ready(function() {
                 $("#ankur").html("Updating the results in text box");
                 $("#show_results").show();
                 $("#show_results").html('<h3>' + data + '</h3>');
-                $("#ankur").html(data);
         });
-
+        $("#heading").html("<h2>See the results on the canvas!</h2>");
         redraw();
     });
 
@@ -264,28 +299,47 @@ $(document).ready(function() {
 	$("#target").bind("touchend mouseup", function (e) {    
 		$("#divmeta").show();
 
-        setTimeout( function() {
-    		var text = $("#log").text();
-    		text = text + "]";
-    		$("#log").html(text);
-        	$("#target").unbind("touchmove mousemove", trackPoints);
-        	$("#ankur").html(text);
-
-
-        	$.ajax({url:"http://" + server_ip + ":9080/add_shape",
-        		type: 'POST',
+        if (is_recognition_done == true) {
+            newEvent = event;
+            this_x = newEvent.pageX - c.offsetLeft;
+            this_y = newEvent.pageY - c.offsetTop;    
+            data_to_post = '{ "X":' + String(this_x)  + ','+ '"Y":' + String(this_y)  + '}';
+            $.ajax({url:"http://" + server_ip + ":9080/mark_edge",
+                type: 'POST',
                 async: false,
-        		headers: {
-        			'Content-Type': 'application/json',
-        			'Accept': 'application/json'
-        		},
-        		data: text,
-        		success:function(result) {
-          			$("#ankur").html("Successfully posted the data");
-        		}
-        	});
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                data: data_to_post,
+                success:function(result) {
+                    $("#ankur").html("Successfully posted the data");
+                }
+            });
             redraw();
-        }, 0);
+            return;
+        }
+        
+		var text = $("#log").text();
+		text = text + "]";
+		$("#log").html(text);
+    	$("#target").unbind("touchmove mousemove", trackPoints);
+    	$("#ankur").html(text);
+
+
+    	$.ajax({url:"http://" + server_ip + ":9080/add_shape",
+    		type: 'POST',
+            async: false,
+    		headers: {
+    			'Content-Type': 'application/json',
+    			'Accept': 'application/json'
+    		},
+    		data: text,
+    		success:function(result) {
+      			$("#ankur").html("Successfully posted the data");
+    		}
+    	});
+        redraw();
 	});
 
 
@@ -293,11 +347,19 @@ $(document).ready(function() {
 	$("#target").bind("touchstart mousedown", function (e) {
 		$("#divmeta").hide();
 
+        if (is_recognition_done == true) {
+            return;
+        }
+
 		first = 0;
 		$("#log").html('[');
 		$("#ankur").html('Array loaded Mouse is down');
     	$("#target").bind("touchmove mousemove", trackPoints);
     });
+
+    // Code for this particular example starts here.
+    $("#heading").html("<h2>Draw your graph!</h2>");
+    is_recognition_done = false;
 
 });
 
