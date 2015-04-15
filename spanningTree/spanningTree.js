@@ -11,7 +11,7 @@ var cnt;
 var is_recognition_done;
 
 
-var server_ip = '10.202.159.118'
+var server_ip = '10.201.158.186'
 
 
 
