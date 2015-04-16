@@ -300,7 +300,7 @@ $(document).ready(function() {
 		$("#divmeta").show();
 
         if (is_recognition_done == true) {
-            newEvent = event;
+            newEvent = event.changedTouches[0];
             this_x = newEvent.pageX - c.offsetLeft;
             this_y = newEvent.pageY - c.offsetTop;    
             data_to_post = '{ "X":' + String(this_x)  + ','+ '"Y":' + String(this_y)  + '}';
